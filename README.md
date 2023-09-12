@@ -108,8 +108,9 @@ our server defined in `main.py` to handle incoming calls with its `inbound_call`
 * ActionAgents (used here) are very powerful, a docstring can tell ChatGPT
 what action to trigger and what to pass it 
 * Actions and Agents are highly customizable
-#### 
+#### Cons
 * Open source library nascent, and there's a lack of documentation for especially newer and more rapidly changing features such as actions
+* There were some very ad-hoc changes required to get certain custom actions to work, such as needing to modify the `ActionFactory` in original the Python module file itself (dev confirmed this is currently the way to do this)
 
 ### Looking Forward
 * Using `redis` and kubernetes on cloud deployments not only great for 
