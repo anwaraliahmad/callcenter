@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "callcenter
+name = "callcenter"
 version = "0.1.0"
 description = "Tech demo for an AI appointment scheduling call center."
 authors = ["Anwar Ali-Ahmad <contact@anwaraliahmad.tech>"]
@@ -14,3 +14,5 @@ pyngrok = "^6.0.0"
 python-dotenv = "^1.0.0"
 vocode = "0.1.111a3"
 elevenlabs = "^0.2.6"
+google-cloud = "^0.34.0"
+gunicorn = "^21.2.0"

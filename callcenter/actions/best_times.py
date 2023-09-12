@@ -45,25 +45,29 @@ class BestTimesAction(
     async def run(
         self, action_input: ActionInput[BestTimesActionParameters]
     ) -> ActionOutput[BestTimesActionResponse]:
-        """Retrieves available appointment times for the patient after they provide 
-        their relevant information.
-        The input to this action is a comma separated list of the following values once you have them from the patient calling:
+        """Retrieves best available appointment times for the patient after they provide 
+        their relevant information. This will only be called when all relevant patient info is received.
+
+        The input to this action is a pipe separated list of the following values once you have them from the patient calling:
         - Patient first name 
         - Patient address
         - Patient chief medical reason
         - Patient referral (optional; if provided will be doctor name "<first name> <last_name>" all lowercased)
+        Even if there's no referral, include the pipe separating as if it were there.
 
-        The output will a string in the format of "<Doctor Name>, <Datetime string>, <Address>" representing 
-        the best appointment time, the AI will proceed to ask the user to confirm this appointment and if so then 
-        consent to receiving a confirmation text about it.
+        The output will be a string with at least one appointment time, 
+        each separated by a pipe and in the format of  "<Doctor Name>, <Datetime string>, <Address> | 
+        Doctor Name>, <Datetime string>, <Address> " representing each availability details. 
 
-        Note: Appointments must be read in a format which is patient friendly. Keep in mind this conversation
-        is all voice synthesized to the calling patient.
+        Be sure to ask and confirm which availability is best (the doctor, time, address) before asking for consent
+        to send a confirmation text with these details to a number the patient provides
+
+        example input: John Smith|415 Mission St 3rd Floor, United States|headache||
         """
         print(
             f"Confirm receive {action_input.params.input_str}"
         )
-        tentative_appt_arr = f"John Smith, {times['john smith']['time']}, {times['john smith']['location']}"
+        tentative_appt_arr = f"John Smith,{times['john smith']['time']},{times['john smith']['location']}|Bobby Bobster,{times['bobby_bobster']['time']}, {times['bobby_bobster']['location']}"
 
 
         return ActionOutput(

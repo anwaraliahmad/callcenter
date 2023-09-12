@@ -15,20 +15,13 @@ class TwilioSendTextActionConfig(ActionConfig, type='send_text'):
     """Configuration for TwilioSendTextAction. Used by the agent 
     and action factory to create the TwilioSendTextAction.
     """
+    send_text: bool
     pass
 
 
 class TwilioSendTextParameters(BaseModel):
-    """Required parameters passed by the agent to the action to send a text.
-    Each field (sans phone_number -- the text recipient) is used
-    to construct the message itself (an appointment confirmation).
-    """
-    doctor: str = Field(..., description="The name of the doctor for the appointment.")
-    location: str = Field(..., description="The location of the appointment.")
-    datetime: str = Field(..., description="The date and time of the appointment.")
-    first_name: str = Field(..., description="The first name of the patient.")
-    phone_number: str = Field(..., description="The number to send text to (+1XXXXXXXXXX)")
-
+    input_str: str
+    
 
 class TwilioSendTextResponse(BaseModel):
     """The return object after the TwilioSendTextAction is triggered and ran.
@@ -49,30 +42,37 @@ class TwilioSendTextAction(
     async def run(
         self, action_input: ActionInput[TwilioSendTextParameters]
     ) -> ActionOutput[TwilioSendTextResponse]:
-        """Send a text message to the patient to confirm the appointment they agreed
-        to after they provided all required details.
-        
+        """Sends a text message with appointment details to the patient's phone number
+        once they provided all required information and confirmed an available time.
 
+        The patient must select an appointment (doctor, location, time) from availabilities
+        (get best times) before this action
+        is triggered. 
 
-        Returns:
-            ActionOutput[TwilioSendTextResponse]: _description_
+        The input to this action is a pipe separated list of the patient name, patient phone number (digits only), 
+        name of doctor for appointment, address of appointment, time of appointment 
+        e.g. John Smith|8888888888|Bobby Jones|55 Fruit St, Boston, MA 02114|2024-03-08 12:00:00.000000
         """
         # Set up the Twilio API client
         account_sid = os.environ['TWILIO_ACCOUNT_SID']
         auth_token = os.environ['TWILIO_AUTH_TOKEN']
         client = Client(account_sid, auth_token)
+        print(f'Text message params {action_input.params.input_str}')
+
+        first_name, phone_number, doctor, location, datetime = action_input.params.input_str.split('|')
+
 
         # Create appointment confirmation message
-        message_body = f'Dear {action_input.params.first_name}: your \
-                            appointment with {action_input.params.doctor} at \
-                            {action_input.params.location} at {action_input.params.datetime} \
+        message_body = f'Dear {first_name}, your\
+                            appointment with {doctor} at\n\
+                            {location} on {datetime}\
                             has been confirmed. Do not reply.'
         # Send message
         message = client.messages \
                         .create(
                             body=message_body,
                             from_=os.getenv('PHONE_NUMBER'),
-                            to=action_input.params.phone_number
+                            to=f"+1{phone_number}"
                         )
         # Print message for testing purposes
         print(f'Message {message.sid} sent: {message_body}')

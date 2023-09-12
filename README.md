@@ -98,3 +98,23 @@ our server defined in `main.py` to handle incoming calls with its `inbound_call`
 6. Launch Redis: `brew services start redis`
 7. Run the actual server: `poetry run uvicorn main:app --port 3000`
 8. Test it out by calling your Twilio number!
+
+
+## Final Notes
+
+### Tech Eval
+#### Pros
+* Vocode easily connects with services for transcription, synthesizing, and AI agents
+* ActionAgents (used here) are very powerful, a docstring can tell ChatGPT
+what action to trigger and what to pass it 
+* Actions and Agents are highly customizable
+#### 
+* Open source library nascent, and there's a lack of documentation for especially newer and more rapidly changing features such as actions
+
+### Looking Forward
+* Using `redis` and kubernetes on cloud deployments not only great for 
+data managament but scalability of service
+    - SortedSets can make use cases for scheduling faster (e.g. pulling best times)
+* For HIPPA compliance and competitive edge, self-managed AI agents can be used instead (See the [list here](https://github.com/vocodedev/vocode-python/tree/main/vocode/streaming/agent))
+    - If CICD and resource usage can be optimized, a custom LLM agent such as Llama can be trained and used
+* Use of `langchain` could be very powerful to handle autonomous actions such as contacting insurance to validate information (think of the applications beyond scheduling)

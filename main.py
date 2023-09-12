@@ -18,7 +18,7 @@ from vocode.streaming.telephony.server.base import (
     TwilioInboundCallConfig,
     TelephonyServer,
 )
-from vocode.streaming.models.transcriber import DeepgramTranscriberConfig, PunctuationEndpointingConfig
+from vocode.streaming.models.transcriber import DeepgramTranscriberConfig, TimeEndpointingConfig
 from vocode.streaming.models.synthesizer import ElevenLabsSynthesizerConfig
 
 from callcenter.action_factory import (
@@ -29,6 +29,14 @@ from callcenter.actions.best_times import (
     BestTimesAction,
     BestTimesActionConfig
 )
+
+from callcenter.actions.send_text import (
+    TwilioSendTextAction,
+    TwilioSendTextActionConfig
+)
+
+# Check development environment
+deployment_env = os.getenv('DEPLOYMENT_ENV', 'local')
 
 # Load the YAML config file
 config = yaml.load(open('config.yaml',encoding='utf-8'), Loader=yaml.FullLoader)
@@ -80,7 +88,8 @@ telephony_server = TelephonyServer(
                 # (e.g. get appointment times, send text message)
                 action_factory = SchedulingActionFactory(),
                 actions=[
-                    BestTimesActionConfig(nearest=False)
+                    BestTimesActionConfig(nearest=False),
+                    TwilioSendTextActionConfig(send_text=True)
                 ]
             ),
             # Configure service for transcribing what caller says (uses Deepgram)
@@ -88,10 +97,8 @@ telephony_server = TelephonyServer(
             transcriber_config=DeepgramTranscriberConfig.from_telephone_input_device(
                 # endpointing_config sets the method of how the transcriber
                 # determines the user is "done" talking at the moment.
-                # For now, it's based on a pause after a puncutation, but
-                # its possible to set it to alternatively being after
-                # a long silence regardless.
-                endpointing_config=PunctuationEndpointingConfig(),
+                # For now, it's based on a pause after talking
+                endpointing_config=TimeEndpointingConfig(),
                 api_key=os.getenv("DEEPGRAM_API_KEY")
             ),
             # Configure service for voice synthesizing what the AI outputs (ElevenLabs)
