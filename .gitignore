@@ -1,0 +1,11 @@
+# The local Python virtual environment
+# Generate yourself: `python3 -m venv env` then `source env/bin/activate`
+env/
+
+# Environment variables (contains secrets for deployment)
+# Required variables provided in `.env.template`
+# Copy template with `cp .env.template .env` then define vars accordingly
+.env 
+
+# Python cache
+__pycache__

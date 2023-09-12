@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "callcenter
+version = "0.1.0"
+description = "Tech demo for an AI appointment scheduling call center."
+authors = ["Anwar Ali-Ahmad <contact@anwaraliahmad.tech>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.12"
+redis = "^4.5.4"
+twilio = "^8.1.0"
+vonage = "^3.5.1"
+pyngrok = "^6.0.0"
+python-dotenv = "^1.0.0"
+vocode = "0.1.111a3"
+elevenlabs = "^0.2.6"
